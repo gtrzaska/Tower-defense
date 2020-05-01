@@ -13,7 +13,7 @@
 
 	function init() {
 
-		//mapa 3- baza czy coś tego typu , 2.4.5.6.7-miejsce do budowy wież, 1- ścieżka , 0 - trawa, -1 - woda ,  -2 - krzak , -3 - drzewo, -4 inny krzok
+		//mapa 3- baza , 2.4.5.6.7-miejsce do budowy wież, 1- ścieżka , 0 - trawa, -1 - woda ,  -2 - krzak , -3 - drzewo, -4 inny krzok
 		map = [
 			[0, 0, 0, 0, 0, -3, 0, 0, 0, 0, 0, -3, 0, 0, -2, 0],
 			[0, -2, 0, 0, 0, 0, 0, 2,2, 2, 2, 2, 2, 0, 0, 0],

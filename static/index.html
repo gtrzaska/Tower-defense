@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Tower Defense</title>
+		<meta charset="utf-8" />
+		<style>
+			#menu {
+				position: fixed;
+                z-index:10;
+				top: 0;
+				left: 0;
+                width:100vw;
+                height:100vh;
+			}
+            #main {
+				position: fixed;
+				top: 0;
+				left: 0;
+                visibility:hidden;
+			}
+			.tower {
+				width: 50px;
+				height: 25px;
+				background-color: gold;
+				border: 1px solid black;
+			}
+             #help {
+                z-index:20;
+                position: fixed;
+				width: 850px;
+                max-height: 90vh;
+                top: 50%;
+	            left: 50%;
+	            transform: translate(-50%, -50%);
+                visibility:hidden;
+                overflow:auto;
+                background-color:rgba(0, 0, 0, 0.85);
+            }
+            #help2 {
+                z-index:20;
+                position: fixed;
+                right:0;
+                width:40px;
+                height: 40px;
+            }
+			#soldierSelection {
+				position: fixed;
+				left: 0;
+				bottom: 0;
+				width: 35%;
+				height: 100px;
+				background-image: url("textures/int.png");
+
+			}
+			#towersSelection {
+				overflow: hidden;
+				position: fixed;
+				right: 0;
+				bottom: 0;
+				width: 35%;
+				height: 100px;
+				background-image: url("textures/int2.png");
+                
+			}
+
+			#soldierSelection > div{
+				display: inline-block;
+				width: 80px;
+				height: 80px;
+				margin: 10px 15px 0 10px;
+				border: 1px solid black;
+				border-radius: 10px;
+			}
+            #towersSelection > div > div {
+				display: inline-block;
+				width: 80px;
+				height: 80px;
+				margin: 10px 15px 0px 10px;
+				border: 1px solid black;
+				border-radius: 10px;
+			}
+            #towersSelection > div {
+				margin-left:150px
+			}
+            #blade{
+                 background-image: url("textures/blade2.png");
+            }
+             #fatso{
+                 background-image: url("textures/fatso.png");
+            }
+             #skeleton{
+                 background-image: url("textures/skeleton.png");
+            }
+             #Excavator{
+                 background-image: url("textures/kopara.png");
+            }
+             #gun1{
+                 background-image: url("textures/gun1.png");
+            }
+             #gun2{
+                 background-image: url("textures/gun2.png");
+            }
+             #gun3{
+                 background-image: url("textures/gun3.png");
+            }
+             #samurai{
+                 background-image: url("textures/samurai.png");
+            }
+			#playersName {
+				position: relative;
+				left: 7px;
+				width: 230px;
+				height: 30px;
+				border-radius: 8px;
+				font-size: 20px;
+				background-color: rgba(0, 0, 0, 0.5);
+				color: white;
+				text-align: center;
+				transition: 700ms;
+			}
+			#playersName.red {
+				border: 2px inset red;
+			}
+
+            #rules:hover {
+		    	content: url('textures/menurules.png');
+			}
+
+			#stats {
+				position: fixed;
+				top: 5px;
+				right: 10px;
+				color: white;
+			}
+		</style>
+		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="Board.js"></script>
+		<script src="Towers.js"></script>
+		<script src="Camera.js"></script>
+		<script src="Models.js"></script>
+		<script src="Soldier.js"></script>
+        <script src="Menu.js"></script>
+        <script src="Net.js"></script>
+		<script src="CanvasUi.js"></script>
+		<script src="three.js"></script>
+        <script src="Skybox.js"></script>
+        <script src="ColladaLoader.js"></script>
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+
+		<script>
+
+
+
+
+
+			//inicjalizacja poszczególnych klas
+            var Board, Towers, Camera, Models,Menu,Skybox;
+			var towerNoumber = -1
+			var client = io();
+			var side = null;
+
+			//statystyki gracza
+			isAlive = false;	//gracz zyje
+			canRender = true;	//gra moze sie renderowac - umozliwa streamowanie
+			lives = 20, enemyLives = 20;	//zycia
+			gold = 1000;
+			goldNumber = gold;	//zloto ktore jest wyswietlane w ui - jest po to zeby gold mial pewna wartosc a goldNumber sluzy do efektow
+			goldPerSecond = 50;
+
+			enemyName = "";
+
+               
+			window.addEventListener("load", function () {
+				client = io();
+				Menu = new Menu()
+				Net = new Net();
+				//Net = new Net();
+
+				towerType = "cannon";
+
+				canvasUi = new CanvasUi();
+			})
+			//document.getElementById("play").addEventListener("click", Menu.start(), true);
+			function start() {
+			    Menu.start()
+			}
+			function nTower(i) {
+				towerType = i;
+			}
+			function hover(element, x) {
+			    element.setAttribute('src', 'textures/' + x + '.png');
+			    console.log(element)
+			    
+			}
+			function unhover(element,x) {
+			    element.setAttribute('src', 'textures/' + x + '2.png');
+			    console.log(element)
+			}
+			var help = false;
+			function helpp() {
+			    if (!help) {
+			        $("#help").css("visibility", "visible");
+			        help = true
+			    }
+			    else if (help) {
+			        $("#help").css("visibility", "hidden");
+			        help = false
+			    }
+			}
+		</script>
+	</head>
+	<body>
+        <div id="help"><img src="textures/help.png" alt="help" /></div>
+        <img id="help2" src="textures/help2.png" alt="xd" onclick="helpp()" /> 
+        <div id="menu">
+            <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width:250px">
+				<input type="text" id="playersName" placeholder="Write your name" />
+
+                <img id="play" src="textures/menuplay2.png" alt="xd"  onclick="start()" onmouseover="hover(this,'menuplay');" onmouseout="unhover(this,'menuplay')"/> 
+                <img src="textures/menuopt2.png" alt="xd" onmouseover="hover(this,'menuopt');" onmouseout="unhover(this,'menuopt')" />
+                <img id="rules" src="textures/menurules2.png" alt="xd"  onmouseover="hover(this,'menurules');" onmouseout="unhover(this,'menurules')";/>
+            </div>
+        </div>
+		<div id="main"></div>
+        <div id="interfaces" style="visibility:hidden">
+			<div id="stats"></div>
+
+            <div id="soldierSelection">
+                <div id="blade" onclick="Models.addModel(0)"></div>
+                <div id="skeleton" onclick="Models.addModel(1)"></div>
+                <div id="fatso" onclick="Models.addModel(2)"></div>
+                <div id="samurai" onclick="Models.addModel(3)"></div>
+            </div>
+
+            <div id="ui"></div>
+
+            <div id="towersSelection">
+                <div>
+                    <div id="gun1" onclick="nTower(0)"></div>
+                    <div id="gun2" onclick="nTower(1)"></div>
+                    <div id="gun3" onclick="nTower(2)"></div>
+                    <div id="Excavator" onclick="nTower(3)"></div>
+                </div>
+            </div>
+        </div>
+	</body>
+</html>
